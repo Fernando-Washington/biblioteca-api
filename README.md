@@ -22,6 +22,21 @@ Documentação (Swagger): http://127.0.0.1:8000/docs
 pytest
 ```
 
+## Estrutura
+
+```
+app/
+  main.py            # criação do app e rotas
+  schemas.py         # modelos do Pydantic
+  db.py              # dados em memória
+  routers/
+    consulta.py      # GET e POST
+    edicao.py        # PUT e DELETE
+tests/
+  test_livros.py
+```
+
+
 ## Rotas
 
 | Método | Rota | Descrição |
