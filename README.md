@@ -1,7 +1,3 @@
-# Biblioteca API
-
-API REST simples com FastAPI e Pydantic para gerenciar livros. Os dados ficam em memória (sem banco de dados).
-
 ## Integrantes
 
 - Fernando Washington
@@ -13,8 +9,6 @@ API REST simples com FastAPI e Pydantic para gerenciar livros. Os dados ficam em
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
-
-Documentação (Swagger): http://127.0.0.1:8000/docs
 
 ## Testes
 
