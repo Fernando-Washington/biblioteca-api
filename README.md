@@ -5,7 +5,7 @@ API REST simples com FastAPI e Pydantic para gerenciar livros. Os dados ficam em
 ## Integrantes
 
 - Fernando Washington
-- (nome do colega)
+- João Victor Carrenho
 
 ## Como rodar
 
@@ -16,6 +16,12 @@ uvicorn app.main:app --reload
 
 Documentação (Swagger): http://127.0.0.1:8000/docs
 
+## Testes
+
+```bash
+pytest
+```
+
 ## Rotas
 
 | Método | Rota | Descrição |
@@ -23,3 +29,5 @@ Documentação (Swagger): http://127.0.0.1:8000/docs
 | GET | /livros | Lista os livros (filtros `autor` e `disponivel`) |
 | GET | /livros/{id} | Busca um livro |
 | POST | /livros | Cadastra um livro |
+| PUT | /livros/{id} | Atualiza um livro |
+| DELETE | /livros/{id} | Remove um livro |
