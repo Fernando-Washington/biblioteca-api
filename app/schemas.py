@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class LivroCriar(BaseModel):
@@ -14,3 +14,4 @@ class Livro(LivroCriar):
     """Dados de saída: o livro com o id gerado."""
 
     id: int
+    model_config = ConfigDict(from_attributes=True)

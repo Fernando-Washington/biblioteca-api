@@ -1,10 +1,23 @@
-# "Banco" em memória: os dados somem quando o servidor reinicia.
-livros: dict[int, dict] = {}
-proximo_id = 1
+import os
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
+
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./biblioteca.db")
+
+engine = create_engine(
+    DATABASE_URL, connect_args={"check_same_thread": False}
+)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def gerar_id() -> int:
-    global proximo_id
-    novo = proximo_id
-    proximo_id += 1
-    return novo
+class Base(DeclarativeBase):
+    pass
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
