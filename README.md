@@ -7,6 +7,7 @@
 
 ```bash
 pip install -r requirements.txt
+alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
@@ -21,11 +22,15 @@ pytest
 ```
 app/
   main.py            # criação do app e rotas
+  db.py              # configuração do SQLAlchemy/SQLite e sessão (get_db)
+  models.py          # modelo ORM (tabela livros)
   schemas.py         # modelos do Pydantic
-  db.py              # dados em memória
   routers/
     consulta.py      # GET e POST
     edicao.py        # PUT e DELETE
+alembic/
+  env.py             # configuração do ambiente de migração
+  versions/          # scripts de migração do banco
 tests/
   test_livros.py
 ```
@@ -40,3 +45,4 @@ tests/
 | POST | /livros | Cadastra um livro |
 | PUT | /livros/{id} | Atualiza um livro |
 | DELETE | /livros/{id} | Remove um livro |
+
