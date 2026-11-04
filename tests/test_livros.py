@@ -1,9 +1,31 @@
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
-from app import db
+from app import models
+from app.db import Base, get_db
 from app.main import app
 
+engine_teste = create_engine(
+    "sqlite://",
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
+SessionTeste = sessionmaker(autocommit=False, autoflush=False, bind=engine_teste)
+Base.metadata.create_all(bind=engine_teste)
+
+
+def get_db_teste():
+    db = SessionTeste()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+app.dependency_overrides[get_db] = get_db_teste
 client = TestClient(app)
 
 LIVRO = {"titulo": "Dom Casmurro", "autor": "Machado de Assis", "ano": 1899}
@@ -11,8 +33,10 @@ LIVRO = {"titulo": "Dom Casmurro", "autor": "Machado de Assis", "ano": 1899}
 
 @pytest.fixture(autouse=True)
 def limpar_banco():
-    db.livros.clear()
-    db.proximo_id = 1
+    with SessionTeste() as session:
+        session.query(models.Livro).delete()
+        session.commit()
+
 
 
 def test_criar_livro():

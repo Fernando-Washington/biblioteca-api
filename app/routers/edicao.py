@@ -1,21 +1,32 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
-from app import db
+from app import models
+from app.db import get_db
 from app.schemas import Livro, LivroCriar
 
 router = APIRouter(prefix="/livros", tags=["livros"])
 
 
 @router.put("/{livro_id}", response_model=Livro)
-def atualizar_livro(livro_id: int, livro: LivroCriar):
-    if livro_id not in db.livros:
+def atualizar_livro(
+    livro_id: int, livro: LivroCriar, session: Session = Depends(get_db)
+):
+    registro = session.get(models.Livro, livro_id)
+    if registro is None:
         raise HTTPException(status_code=404, detail="Livro não encontrado")
-    db.livros[livro_id] = {"id": livro_id, **livro.model_dump()}
-    return db.livros[livro_id]
+    for campo, valor in livro.model_dump().items():
+        setattr(registro, campo, valor)
+    session.commit()
+    session.refresh(registro)
+    return registro
 
 
 @router.delete("/{livro_id}", status_code=204)
-def remover_livro(livro_id: int):
-    if livro_id not in db.livros:
+def remover_livro(livro_id: int, session: Session = Depends(get_db)):
+    registro = session.get(models.Livro, livro_id)
+    if registro is None:
         raise HTTPException(status_code=404, detail="Livro não encontrado")
-    del db.livros[livro_id]
+    session.delete(registro)
+    session.commit()
+
