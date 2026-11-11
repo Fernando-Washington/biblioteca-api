@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app import models
 from app.db import get_db
 from app.schemas import Livro, LivroCriar
+from app.seguranca import get_usuario_atual
 
 router = APIRouter(prefix="/livros", tags=["livros"])
 
@@ -33,7 +34,11 @@ def buscar_livro(livro_id: int, session: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=Livro, status_code=201)
-def criar_livro(livro: LivroCriar, session: Session = Depends(get_db)):
+def criar_livro(
+    livro: LivroCriar,
+    session: Session = Depends(get_db),
+    usuario=Depends(get_usuario_atual),
+):
     """Cadastra um novo livro."""
     novo = models.Livro(**livro.model_dump())
     session.add(novo)

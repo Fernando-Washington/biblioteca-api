@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.routers import consulta, edicao
+from app.routers import auth, consulta, edicao
 
 app = FastAPI(
     title="Biblioteca API",
@@ -8,6 +8,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
+app.include_router(auth.router)
 app.include_router(consulta.router)
 app.include_router(edicao.router)
 

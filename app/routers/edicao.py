@@ -4,8 +4,11 @@ from sqlalchemy.orm import Session
 from app import models
 from app.db import get_db
 from app.schemas import Livro, LivroCriar
+from app.seguranca import get_usuario_atual
 
-router = APIRouter(prefix="/livros", tags=["livros"])
+router = APIRouter(
+    prefix="/livros", tags=["livros"], dependencies=[Depends(get_usuario_atual)]
+)
 
 
 @router.put("/{livro_id}", response_model=Livro)

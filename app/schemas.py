@@ -15,3 +15,19 @@ class Livro(LivroCriar):
 
     id: int
     model_config = ConfigDict(from_attributes=True)
+
+
+class UsuarioCriar(BaseModel):
+    email: str = Field(min_length=3, max_length=100, examples=["admin@biblioteca.com"])
+    senha: str = Field(min_length=4, max_length=50, examples=["123456"])
+
+
+class Usuario(BaseModel):
+    id: int
+    email: str
+    model_config = ConfigDict(from_attributes=True)
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str

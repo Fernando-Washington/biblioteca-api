@@ -12,3 +12,11 @@ class Livro(Base):
     autor: Mapped[str] = mapped_column(String(100), nullable=False)
     ano: Mapped[int] = mapped_column(Integer, nullable=False)
     disponivel: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+
+class Usuario(Base):
+    __tablename__ = "usuarios"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    senha_hash: Mapped[str] = mapped_column(String(255), nullable=False)
