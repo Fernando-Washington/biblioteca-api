@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app import models
+from app.auth import verificar_token
 from app.db import get_db
 from app.schemas import Livro, LivroCriar
 
@@ -38,12 +39,16 @@ def atualizar_livro(
     status_code=204,
     summary="Remover livro",
     responses={
+        401: {"description": "Token inválido ou ausente"},
         404: {"description": "Livro não encontrado"},
     },
+    dependencies=[Depends(verificar_token)],
 )
 def remover_livro(livro_id: int, session: Session = Depends(get_db)):
     """
     Remove um livro pelo id.
+
+    Precisa enviar o token no header **X-Token**.
     """
     registro = session.get(models.Livro, livro_id)
     if registro is None:
