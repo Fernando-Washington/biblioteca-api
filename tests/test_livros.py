@@ -29,6 +29,7 @@ app.dependency_overrides[get_db] = get_db_teste
 client = TestClient(app)
 
 LIVRO = {"titulo": "Dom Casmurro", "autor": "Machado de Assis", "ano": 1899}
+TOKEN = {"X-Token": "segredo123"}
 
 
 @pytest.fixture(autouse=True)
@@ -37,6 +38,11 @@ def limpar_banco():
         session.query(models.Livro).delete()
         session.commit()
 
+
+def test_listar_vazio():
+    resposta = client.get("/livros/")
+    assert resposta.status_code == 200
+    assert resposta.json() == []
 
 
 def test_criar_livro():
@@ -60,7 +66,9 @@ def test_listar_com_filtro():
 def test_buscar_livro():
     client.post("/livros/", json=LIVRO)
     assert client.get("/livros/1").status_code == 200
-    assert client.get("/livros/99").status_code == 404
+    resposta = client.get("/livros/99")
+    assert resposta.status_code == 404
+    assert resposta.json()["detail"] == "Livro não encontrado"
 
 
 def test_atualizar_livro():
@@ -71,8 +79,14 @@ def test_atualizar_livro():
     assert client.put("/livros/99", json=LIVRO).status_code == 404
 
 
+def test_remover_sem_token():
+    client.post("/livros/", json=LIVRO)
+    assert client.delete("/livros/1").status_code == 401
+    assert client.get("/livros/1").status_code == 200
+
+
 def test_remover_livro():
     client.post("/livros/", json=LIVRO)
-    assert client.delete("/livros/1").status_code == 204
+    assert client.delete("/livros/1", headers=TOKEN).status_code == 204
     assert client.get("/livros/1").status_code == 404
-    assert client.delete("/livros/1").status_code == 404
+    assert client.delete("/livros/1", headers=TOKEN).status_code == 404

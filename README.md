@@ -11,6 +11,8 @@ alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
+Documentação (Swagger): http://127.0.0.1:8000/docs
+
 ## Testes
 
 ```bash
@@ -22,6 +24,7 @@ pytest
 ```
 app/
   main.py            # criação do app e rotas
+  auth.py            # verificação do token (header X-Token)
   db.py              # configuração do SQLAlchemy/SQLite e sessão (get_db)
   models.py          # modelo ORM (tabela livros)
   schemas.py         # modelos do Pydantic
@@ -44,5 +47,5 @@ tests/
 | GET | /livros/{id} | Busca um livro |
 | POST | /livros | Cadastra um livro |
 | PUT | /livros/{id} | Atualiza um livro |
-| DELETE | /livros/{id} | Remove um livro |
+| DELETE | /livros/{id} | Remove um livro (exige header `X-Token: segredo123`) |
 
